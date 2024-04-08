@@ -21,11 +21,11 @@ air:
 
 .PHONY: initdb
 initdb: initPostgres
-	scripts/initdb.sh; sleep 5; go run main.go migrate up -c ./internal/config/values.yaml
+	scripts/initdb.sh; sleep 2;go run main.go migrate up -c $(VALUES_PATH)
 
 .PHONY: initPostgres
 initPostgres:
-	cd ./internal/config; docker compose up -d
+	cd ./internal/config; docker compose -p chat-network up -d 
 
 .PHONY: new-sql
 new-sql:

@@ -1,5 +1,0 @@
-database:
-  postgres:
-    dsn: "postgresql://root:root@localhost:5432/pickeeper?sslmode=disable"
-  redis:
-    dsn: "localhost:6379"

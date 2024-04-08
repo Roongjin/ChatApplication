@@ -1,0 +1,3 @@
+./src/backend/internal/config/persistence-data
+./src/backend/internal/config/values.yaml
+./src/backend/internal/config/docker-compose.yml
