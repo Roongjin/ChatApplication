@@ -1,0 +1,2 @@
+redis:
+  dsn: "localhost:6379"

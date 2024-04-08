@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"log"
+
+	"github.com/Roongjin/ChatApplication/src/backend/internal/cli"
+)
 
 func main() {
-	fmt.Println("Setup project")
+	if err := cli.RootCmd.Execute(); err != nil {
+		log.Fatal(err.Error())
+	}
 }
