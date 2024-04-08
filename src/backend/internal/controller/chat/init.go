@@ -8,11 +8,16 @@ import (
 
 type Resolver struct {
 	RoomUsecase         usecase.RoomUseCase
-	LookupUsecase       usecase.LinkUseCase
+	LinkUsecase         usecase.LinkUseCase
 	ConversationUsecase usecase.ConversationUseCase
 	UserUsecase         usecase.UserUseCase
 }
 
 func NewResolver(db *bun.DB) *Resolver {
-	return &Resolver{}
+	return &Resolver{
+		RoomUsecase:         *usecase.NewRoomUseCase(db),
+		LinkUsecase:         *usecase.NewLinkUseCase(db),
+		ConversationUsecase: *usecase.NewConversationUseCase(db),
+		UserUsecase:         *usecase.NewUserUseCase(db),
+	}
 }
