@@ -3,7 +3,7 @@ package cmd
 import (
 	"log"
 
-	"github.com/Roongjin/ChatApplication/src/backend/internal/migrate"
+	"github.com/Roongjin/ChatApplication/src/backend/internal/cli/migrate"
 )
 
 func main() {
