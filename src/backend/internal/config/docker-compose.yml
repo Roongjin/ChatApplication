@@ -1,6 +1,17 @@
 version: "3.9"
 
 services:
+  postgres:
+    image: postgres:16
+    container_name: postgresql
+    ports:
+      - 5432:5432
+    volumes:
+      - ./persistence-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=chatapp
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
   redis:
     image: redis:alpine
     container_name: redis

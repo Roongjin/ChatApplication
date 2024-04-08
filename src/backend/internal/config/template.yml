@@ -1,2 +1,5 @@
-redis:
-  dsn: ""
+database:
+  redis:
+    dsn: ""
+  postgres:
+    dsn: ""

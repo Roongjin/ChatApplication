@@ -1,8 +1,17 @@
 package chat
 
-import "github.com/uptrace/bun"
+import (
+	"github.com/uptrace/bun"
 
-type Resolver struct{}
+	"github.com/Roongjin/ChatApplication/src/backend/internal/usecase"
+)
+
+type Resolver struct {
+	RoomUsecase         usecase.RoomUseCase
+	LookupUsecase       usecase.LinkUseCase
+	ConversationUsecase usecase.ConversationUseCase
+	UserUsecase         usecase.UserUseCase
+}
 
 func NewResolver(db *bun.DB) *Resolver {
 	return &Resolver{}
