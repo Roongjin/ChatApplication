@@ -37,14 +37,14 @@ var ServeCmd = &cobra.Command{
 		r := gin.Default()
 
 		r.Use(cors.New(cors.Config{
-			AllowOrigins:     []string{"http://localhost:3000"},
+			AllowOrigins:     []string{"http://localhost:5173"},
 			AllowMethods:     []string{"GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"},
 			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 			ExposeHeaders:    []string{"Content-Length"},
 			AllowCredentials: true,
 		}))
 
-		r.POST("/authen", handler.User.Authentication)
+		r.POST("/authen/:name", handler.User.Authentication)
 
 		// authenticated := r.Group("/", handler.User.RetrieveInitInfo)
 
