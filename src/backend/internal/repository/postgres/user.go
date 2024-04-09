@@ -37,3 +37,12 @@ func (u *UserDB) FindOneByName(ctx context.Context, username string) (*model.Use
 
 	return &user, nil
 }
+
+func (u *UserDB) FindOnlineUsers(ctx context.Context) ([]*model.User, error) {
+	var users []*model.User
+	if err := u.db.NewSelect().Model(&users).Where("is_online = TRUE").Scan(ctx, &users); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
