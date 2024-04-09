@@ -44,7 +44,9 @@ var ServeCmd = &cobra.Command{
 			AllowCredentials: true,
 		}))
 
-		r.POST("/", handler.User.Authentication)
+		r.POST("/authen", handler.User.Authentication)
+
+		// authenticated := r.Group("/", handler.User.RetrieveInitInfo)
 
 		r.Run()
 
