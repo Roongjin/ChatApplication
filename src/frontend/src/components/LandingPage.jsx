@@ -1,6 +1,7 @@
 import { useState } from "react";
 import apiClient from "../libs/apiClient";
 import { useNavigate } from "react-router-dom";
+import "../index.css";
 
 const LandingPage = ({ setUserId }) => {
   const navigate = useNavigate();
@@ -19,9 +20,16 @@ const LandingPage = ({ setUserId }) => {
 
   return (
     <>
-      <h3>Please enter your name</h3>
-      <input onChange={(event) => setName(event.target.value)} />
-      <button type="submit" onClick={register}>
+      <h3 className="text-sky-600 w-1/2 rounded">Please enter your name</h3>
+      <input
+        onChange={(event) => setName(event.target.value)}
+        className="bg-black border-2 border-white text-white rounded w-1/2"
+      />
+      <button
+        type="submit"
+        onClick={register}
+        className="bg-sky-300 rounded w-1/2"
+      >
         Confirm
       </button>
     </>
