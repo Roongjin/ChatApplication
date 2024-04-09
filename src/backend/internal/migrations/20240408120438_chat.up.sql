@@ -19,5 +19,8 @@ CREATE TABLE conversations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
   text varchar(2000) NOT NULL,
   user_id UUID REFERENCES users (id) ON UPDATE CASCADE ON DELETE SET NULL,
-  room_id UUID REFERENCES rooms (id) ON UPDATE CASCADE ON DELETE SET NULL
+  room_id UUID REFERENCES rooms (id) ON UPDATE CASCADE ON DELETE SET NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  deleted_at timestamptz
 );

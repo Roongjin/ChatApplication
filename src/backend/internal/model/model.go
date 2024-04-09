@@ -1,6 +1,8 @@
 package model
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 )
@@ -26,8 +28,11 @@ type UserRoomLink struct {
 
 type Conversation struct {
 	bun.BaseModel `bun:"table:conversations,alias:convs"`
-	Id            uuid.UUID `bun:"id,pk,type:uuid,default:gen_random_uuid()" json:"id"`
-	Text          string    `bun:"text,type:varchar" json:"text"`
-	UserId        uuid.UUID `bun:"user_id,type:uuid" json:"user_id"`
-	RoomId        uuid.UUID `bun:"room_id,type:uuid" json:"room_id"`
+	Id            uuid.UUID  `bun:"id,pk,type:uuid,default:gen_random_uuid()" json:"id"`
+	Text          string     `bun:"text,type:varchar" json:"text"`
+	UserId        uuid.UUID  `bun:"user_id,type:uuid" json:"user_id"`
+	RoomId        uuid.UUID  `bun:"room_id,type:uuid" json:"room_id"`
+	CreatedAt     time.Time  `bun:"created_at,type:timestamptz,default:now()" json:"created_at"`
+	UpdatedAt     time.Time  `bun:"updated_at,type:timestamptz,default:now()" json:"updated_at"`
+	DeletedAt     *time.Time `bun:"deleted_at,soft_delete,nullzero,type:timestamptz" json:"deleted_at"`
 }
