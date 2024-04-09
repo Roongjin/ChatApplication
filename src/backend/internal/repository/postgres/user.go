@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Roongjin/ChatApplication/src/backend/internal/model"
+	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 )
 
@@ -45,4 +46,18 @@ func (u *UserDB) FindOnlineUsers(ctx context.Context) ([]*model.User, error) {
 	}
 
 	return users, nil
+}
+
+func (u *UserDB) ChangeOnlineStatusById(ctx context.Context, userId uuid.UUID, isOnline bool) error {
+	user, err := u.FindOneById(ctx, userId)
+	if err != nil {
+		return err
+	}
+
+	user.IsOnline = isOnline
+	if err := u.UpdateOne(ctx, user); err != nil {
+		return err
+	}
+
+	return nil
 }

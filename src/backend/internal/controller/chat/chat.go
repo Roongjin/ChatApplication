@@ -38,6 +38,11 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+const (
+	ONLINE  = true
+	OFFLINE = false
+)
+
 type Chat struct {
 	// this sends message to a room
 	broadcast chan Message
@@ -132,6 +137,10 @@ func (c *Chat) Join(uid UserId) {
 		log.Println("joined room")
 		log.Printf("room: %s\n", lookup.RoomId.String())
 	}
+
+	if err := c.Resolver.UserUsecase.UserRepo.ChangeOnlineStatusById(ctx, uuid.UUID(uid), ONLINE); err != nil {
+		log.Panicf("error changing to ONLINE status: %s\n", err.Error())
+	}
 }
 
 // clear the user's session from the room
@@ -158,6 +167,10 @@ func (c *Chat) Leave(uid UserId) {
 	// delete user -> rooms relationship
 	if err := c.rooms.Delete(uuid.UUID(uid), onDelete); err != nil {
 		log.Panicf("error removing from room: %s\n", err.Error())
+	}
+
+	if err := c.Resolver.UserUsecase.UserRepo.ChangeOnlineStatusById(ctx, uuid.UUID(uid), OFFLINE); err != nil {
+		log.Panicf("error changing to OFFLINE status: %s\n", err.Error())
 	}
 
 	log.Println("left room")

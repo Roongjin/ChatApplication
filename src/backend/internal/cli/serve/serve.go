@@ -3,6 +3,7 @@ package serve
 import (
 	"github.com/Roongjin/ChatApplication/src/backend/internal/config"
 	"github.com/Roongjin/ChatApplication/src/backend/internal/controller"
+	"github.com/Roongjin/ChatApplication/src/backend/internal/controller/chat"
 	"github.com/Roongjin/ChatApplication/src/backend/internal/third-party/databases"
 
 	"github.com/gin-contrib/cors"
@@ -29,10 +30,14 @@ var ServeCmd = &cobra.Command{
 			printAppConfig(appCfg)
 		}
 
+		// DBs and controllers
 		db := databases.ConnectSQLDB(appCfg.Database.Postgres.DSN)
 		handler := controller.NewHandler(db)
-		// redisClient := databases.ConnectRedis(appCfg.Database.Redis.DSN)
-		// chatEntity := chat.NewChat(db, redisClient, &handler.Chat)
+		redisClient := databases.ConnectRedis(appCfg.Database.Redis.DSN)
+
+		// Chat system
+		chatEntity := chat.NewChat(db, redisClient, &handler.Chat)
+		defer chatEntity.Close()
 
 		r := gin.Default()
 
@@ -47,6 +52,10 @@ var ServeCmd = &cobra.Command{
 		r.POST("/authen/:name", handler.User.Authentication)
 
 		// authenticated := r.Group("/", handler.User.RetrieveInitInfo)
+		chats := r.Group("/chat")
+		{
+			chats.GET("/ws/:userId", chatEntity.ServeWS)
+		}
 
 		r.Run()
 
