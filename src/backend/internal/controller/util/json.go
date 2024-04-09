@@ -9,7 +9,7 @@ import (
 func Raise500Error(c *gin.Context, err error) {
 	c.JSON(http.StatusInternalServerError, gin.H{
 		"success": false,
-		"error":   err,
+		"error":   err.Error(),
 	})
 	c.Abort()
 }
