@@ -1,7 +1,7 @@
 import { useState } from "react";
-import apiClient from "../libs/apiClient";
+import apiClient from "@/libs/apiClient";
 import { useNavigate } from "react-router-dom";
-import "../index.css";
+import "@/index.css";
 
 const LandingPage = ({ setUserId }) => {
   const navigate = useNavigate();

@@ -1,10 +1,12 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import apiClient from "../libs/apiClient";
-import "../index.css";
+import apiClient from "@/libs/apiClient";
+import "@/index.css";
+import Message from "./Room";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 
 const Chat = ({ userId }) => {
+  const [messages, setMessages] = useState([]);
   const navigate = useNavigate();
   const WS_URL = `ws://localhost:8080/chat/ws/${userId}`;
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
@@ -52,10 +54,20 @@ const Chat = ({ userId }) => {
     if (!lastJsonMessage) {
       return;
     }
-    console.log(`This is the new message: ${lastJsonMessage.data}`);
+    console.log(lastJsonMessage);
+    console.log(messages);
+    setMessages(messages.concat(lastJsonMessage));
   }, [lastJsonMessage]);
 
-  return <>{userId}</>;
+  return (
+    <>
+      <div>
+        {messages.map((msg) => (
+          <Message key={msg.id} message={msg} />
+        ))}
+      </div>
+    </>
+  );
 };
 
 export default Chat;

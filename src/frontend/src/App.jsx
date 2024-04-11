@@ -1,5 +1,5 @@
-import LandingPage from "./components/LandingPage";
-import Chat from "./components/Chat";
+import LandingPage from "@/components/LandingPage/LandingPage";
+import Chat from "@/components/Chat/Chat";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 
