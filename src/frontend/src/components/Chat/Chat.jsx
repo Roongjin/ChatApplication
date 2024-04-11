@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import apiClient from "@/libs/apiClient";
 import "@/index.css";
-import Message from "./Room";
+import Message from "@/components/Chat/Room";
+import OnlineUsers from "@/components/Chat/Sidebar";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 
 const Chat = ({ userId }) => {
   const [messages, setMessages] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const navigate = useNavigate();
   const WS_URL = `ws://localhost:8080/chat/ws/${userId}`;
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
@@ -33,6 +35,7 @@ const Chat = ({ userId }) => {
           console.log(e);
         });
       }
+      setOnlineUsers(data);
     }
     fetchOnlineUsers();
   }, []);
@@ -63,10 +66,15 @@ const Chat = ({ userId }) => {
 
   return (
     <>
-      <div>
-        {messages.map((msg) => (
-          <Message key={msg.id} message={msg} />
-        ))}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="max-w-full">
+          {messages.map((msg) => (
+            <Message key={msg.id} message={msg} />
+          ))}
+        </div>
+        <div>
+          <OnlineUsers onlineUsers={onlineUsers} selfId={userId} />
+        </div>
       </div>
     </>
   );
