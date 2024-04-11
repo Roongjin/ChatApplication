@@ -20,7 +20,7 @@ type Room struct {
 }
 
 type UserRoomLink struct {
-	bun.BaseModel `bun:"table:user_room_lookup,alias:urlookup"`
+	bun.BaseModel `bun:"table:user_room_links,alias:urlinks"`
 	Id            uuid.UUID `bun:"id,pk,type:uuid,default:gen_random_uuid()" json:"id"`
 	UserId        uuid.UUID `bun:"user_id,type:uuid" json:"user_id"`
 	RoomId        uuid.UUID `bun:"room_id,type:uuid" json:"room_id"`

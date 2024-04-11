@@ -51,7 +51,6 @@ var ServeCmd = &cobra.Command{
 
 		r.POST("/authen/:name", handler.User.Authentication)
 
-		// authenticated := r.Group("/", handler.User.RetrieveInitInfo)
 		chats := r.Group("/chat")
 		{
 			chats.GET("/ws/:userId", chatEntity.ServeWS)
