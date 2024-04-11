@@ -56,7 +56,9 @@ const Chat = ({ userId }) => {
     }
     console.log(lastJsonMessage);
     console.log(messages);
-    setMessages(messages.concat(lastJsonMessage));
+    if (lastJsonMessage.type === "message") {
+      setMessages(messages.concat(lastJsonMessage));
+    }
   }, [lastJsonMessage]);
 
   return (

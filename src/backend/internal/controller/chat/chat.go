@@ -376,6 +376,7 @@ func (c *Chat) ServeWS(gc *gin.Context) {
 		}
 
 		msg.Sender = user.Id
+		msg.SenderName = user.Username
 		c.broadcast <- msg
 	}
 }
