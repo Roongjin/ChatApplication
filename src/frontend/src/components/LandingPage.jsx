@@ -9,8 +9,10 @@ const LandingPage = ({ setUserId }) => {
 
   const register = async () => {
     try {
-      const { data } = await apiClient.post(`/authen/${name}`);
-      setUserId(data.data.id);
+      const { data } = await apiClient
+        .post(`/authen/${name}`)
+        .then((resp) => resp.data);
+      setUserId(data.id);
       navigate("/chat");
     } catch (err) {
       console.log(err);
