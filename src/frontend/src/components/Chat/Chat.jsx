@@ -59,9 +59,13 @@ const Chat = ({ userId }) => {
     }
     console.log(lastJsonMessage);
     console.log(messages);
+
     if (lastJsonMessage.type === "message") {
       setMessages(messages.concat(lastJsonMessage));
     }
+
+    // if (lastJsonMessage.type === "presence") {
+    // }
   }, [lastJsonMessage]);
 
   return (
