@@ -51,9 +51,10 @@ var ServeCmd = &cobra.Command{
 
 		r.POST("/authen/:name", handler.User.Authentication)
 
-		chats := r.Group("/chat")
+		chat := r.Group("/chat")
 		{
-			chats.GET("/ws/:userId", chatEntity.ServeWS)
+			chat.GET("/ws/:userId", chatEntity.ServeWS)
+			chat.GET("/online-users", handler.User.GetOnlineUsers)
 		}
 
 		r.Run()
