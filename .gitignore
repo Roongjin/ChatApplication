@@ -4,3 +4,4 @@ src/backend/internal/config/docker-compose.yml
 
 **/tmp/
 **/bin/
+**/.env

@@ -10,7 +10,7 @@ const Chat = ({ userId }) => {
   const [messages, setMessages] = useState([]);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const navigate = useNavigate();
-  const WS_URL = `ws://localhost:8080/chat/ws/${userId}`;
+  const WS_URL = `ws://${import.meta.env.VITE_IPADDR}:8080/chat/ws/${userId}`;
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     WS_URL,
     {
