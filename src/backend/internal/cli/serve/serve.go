@@ -43,6 +43,7 @@ var ServeCmd = &cobra.Command{
 		// Chat system
 		chatEntity := chat.NewChat(db, redisClient, &handler.Chat)
 		defer chatEntity.Close()
+		// TODO: add broadcast room at the beginning, use singleton
 
 		r := gin.Default()
 

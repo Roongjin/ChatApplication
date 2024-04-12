@@ -16,7 +16,7 @@ const (
 )
 
 type Message struct {
-	Text       string    `json:"data"`
+	Text       string    `json:"text"`
 	Id         uuid.UUID `json:"id"`
 	Type       string    `json:"type"`
 	Timestamp  time.Time `json:"ts"`

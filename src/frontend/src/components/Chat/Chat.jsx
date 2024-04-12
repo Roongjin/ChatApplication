@@ -29,13 +29,9 @@ const Chat = ({ userId }) => {
       const { data } = await apiClient
         .get("/chat/online-users")
         .then((resp) => resp.data);
-      console.log("data", data);
       if (data) {
-        Array.from(data).forEach((e) => {
-          console.log(e);
-        });
+        setOnlineUsers(data);
       }
-      setOnlineUsers(data);
     }
     fetchOnlineUsers();
   }, []);
@@ -44,12 +40,7 @@ const Chat = ({ userId }) => {
   useEffect(() => {
     console.log("Connection state changed");
     if (readyState === ReadyState.OPEN) {
-      sendJsonMessage({
-        data: `${userId} has connected from front end!`,
-        type: "message",
-        sender: `${userId}`,
-        room: "28e5b39a-e00f-4f10-9975-bc25ff0afacb",
-      });
+      console.log("Connection ready");
     }
   }, [readyState]);
 
@@ -59,13 +50,30 @@ const Chat = ({ userId }) => {
     }
     console.log(lastJsonMessage);
     console.log(messages);
+    console.log(onlineUsers);
 
     if (lastJsonMessage.type === "message") {
       setMessages(messages.concat(lastJsonMessage));
+      return;
     }
 
-    // if (lastJsonMessage.type === "presence") {
-    // }
+    if (lastJsonMessage.type === "presence") {
+      if (lastJsonMessage.text === "1") {
+        setOnlineUsers(
+          onlineUsers.concat({
+            id: lastJsonMessage.sender,
+            is_online: true,
+            username: lastJsonMessage.sender_name,
+          }),
+        );
+        return;
+      }
+      setOnlineUsers(
+        onlineUsers.filter(
+          (user) => user.username !== lastJsonMessage.sender_name,
+        ),
+      );
+    }
   }, [lastJsonMessage]);
 
   return (

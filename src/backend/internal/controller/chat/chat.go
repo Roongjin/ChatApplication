@@ -110,6 +110,11 @@ func (c *Chat) Bind(uid UserId, sid SessionId) func() {
 func (c *Chat) Join(uid UserId) {
 	log.Println("method: join")
 	log.Printf("user: %s\n", uid.String())
+	// TODO: refactor later
+	user, err := c.Resolver.UserUsecase.UserRepo.FindOneById(ctx, uuid.UUID(uid))
+	if err != nil {
+		log.Panicf("error getting user instance: %s\n", err.Error())
+	}
 
 	links, err := c.Resolver.LinkUsecase.LinkRepo.FindByUserId(ctx, uuid.UUID(uid))
 	if err != nil {
@@ -121,12 +126,13 @@ func (c *Chat) Join(uid UserId) {
 		sender, receiver := uuid.UUID(uid), lookup.RoomId
 
 		c.broadcast <- Message{
-			Id:        uuid.New(),
-			Type:      MessageTypePresence,
-			Sender:    sender,
-			Receiver:  receiver,
-			Text:      MessageTypeOnline,
-			Timestamp: time.Now(),
+			Id:         uuid.New(),
+			Type:       MessageTypePresence,
+			Sender:     sender,
+			SenderName: user.Username,
+			Receiver:   receiver,
+			Text:       MessageTypeOnline,
+			Timestamp:  time.Now(),
 		}
 
 		// then add the user after broadcast to avoid notifying themselves
@@ -147,6 +153,10 @@ func (c *Chat) Join(uid UserId) {
 func (c *Chat) Leave(uid UserId) {
 	log.Println("method: leave")
 	log.Printf("user: %s\n", uid.String())
+	user, err := c.Resolver.UserUsecase.UserRepo.FindOneById(ctx, uuid.UUID(uid))
+	if err != nil {
+		log.Panicf("error getting user instance: %s\n", err.Error())
+	}
 
 	// delete user for each room
 	onDelete := func(roomId uuid.UUID) {
@@ -155,12 +165,13 @@ func (c *Chat) Leave(uid UserId) {
 
 		sender, receiver := uuid.UUID(uid), roomId
 		c.broadcast <- Message{
-			Id:        uuid.New(),
-			Type:      MessageTypePresence,
-			Sender:    sender,
-			Receiver:  receiver,
-			Text:      MessageTypeOffline,
-			Timestamp: time.Now(),
+			Id:         uuid.New(),
+			Type:       MessageTypePresence,
+			Sender:     sender,
+			SenderName: user.Username,
+			Receiver:   receiver,
+			Text:       MessageTypeOffline,
+			Timestamp:  time.Now(),
 		}
 	}
 
