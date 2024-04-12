@@ -3,3 +3,7 @@ database:
     dsn: ""
   postgres:
     dsn: ""
+
+network:
+  en0:
+    ip_address: ""

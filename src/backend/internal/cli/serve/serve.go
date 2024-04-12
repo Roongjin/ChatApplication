@@ -1,6 +1,8 @@
 package serve
 
 import (
+	"fmt"
+
 	"github.com/Roongjin/ChatApplication/src/backend/internal/config"
 	"github.com/Roongjin/ChatApplication/src/backend/internal/controller"
 	"github.com/Roongjin/ChatApplication/src/backend/internal/controller/chat"
@@ -30,6 +32,9 @@ var ServeCmd = &cobra.Command{
 			printAppConfig(appCfg)
 		}
 
+		ipAddr := appCfg.Network.En0.IpAddr
+		lanOrigin := fmt.Sprintf("http://%s:5173", ipAddr)
+
 		// DBs and controllers
 		db := databases.ConnectSQLDB(appCfg.Database.Postgres.DSN)
 		handler := controller.NewHandler(db)
@@ -42,7 +47,7 @@ var ServeCmd = &cobra.Command{
 		r := gin.Default()
 
 		r.Use(cors.New(cors.Config{
-			AllowOrigins:     []string{"http://localhost:5173"},
+			AllowOrigins:     []string{"http://localhost:5173", lanOrigin},
 			AllowMethods:     []string{"GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"},
 			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 			ExposeHeaders:    []string{"Content-Length"},

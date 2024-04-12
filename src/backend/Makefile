@@ -5,7 +5,7 @@ document:
 	swag init -g ./internal/cli/serve/serve.go	
 
 .PHONY: serve
-serve: document
+serve: document network
 	go run main.go serve -c $(VALUES_PATH)
 
 .PHONY: install-third-party
@@ -37,9 +37,13 @@ clean:
 	rm -rf ./internal/config/persistence-data; rm -rf ./bin; rm -rf ./tmp
 
 .PHONY: up
-up:
+up: network
 	air -c .air.toml
 
 .PHONY: migrate
 migrate: 
 	go run main.go migrate up -c $(VALUES_PATH)
+
+.PHONY: network
+network:
+	scripts/ipaddr.sh
