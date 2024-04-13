@@ -1,11 +1,14 @@
 package serve
 
 import (
+	"context"
 	"fmt"
+	"log"
 
 	"github.com/Roongjin/ChatApplication/src/backend/internal/config"
 	"github.com/Roongjin/ChatApplication/src/backend/internal/controller"
 	"github.com/Roongjin/ChatApplication/src/backend/internal/controller/chat"
+	"github.com/Roongjin/ChatApplication/src/backend/internal/model"
 	"github.com/Roongjin/ChatApplication/src/backend/internal/third-party/databases"
 
 	"github.com/gin-contrib/cors"
@@ -43,7 +46,11 @@ var ServeCmd = &cobra.Command{
 		// Chat system
 		chatEntity := chat.NewChat(db, redisClient, &handler.Chat)
 		defer chatEntity.Close()
-		// TODO: add broadcast room at the beginning, use singleton
+		if err := handler.Chat.RoomUsecase.RoomRepo.AddOne(context.Background(), &model.Room{
+			Id: model.GetBroadcastRoomId(),
+		}); err != nil {
+			log.Fatal("could not initialise broadcast room")
+		}
 
 		r := gin.Default()
 

@@ -13,4 +13,5 @@ type User interface {
 	FindOneByName(ctx context.Context, username string) (*model.User, error)
 	FindOnlineUsers(ctx context.Context) ([]*model.User, error)
 	ChangeOnlineStatusById(ctx context.Context, userId uuid.UUID, isOnline bool) error
+	InitNewUser(ctx context.Context, user *model.User) error
 }

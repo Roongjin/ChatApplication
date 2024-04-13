@@ -1,6 +1,7 @@
 package model
 
 import (
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -35,4 +36,17 @@ type Conversation struct {
 	CreatedAt     time.Time  `bun:"created_at,type:timestamptz,default:now()" json:"created_at"`
 	UpdatedAt     time.Time  `bun:"updated_at,type:timestamptz,default:now()" json:"updated_at"`
 	DeletedAt     *time.Time `bun:"deleted_at,soft_delete,nullzero,type:timestamptz" json:"deleted_at"`
+}
+
+var (
+	BroadcastRoomId uuid.UUID
+	once            sync.Once
+)
+
+func GetBroadcastRoomId() uuid.UUID {
+	once.Do(func() {
+		BroadcastRoomId = uuid.New()
+	})
+
+	return BroadcastRoomId
 }

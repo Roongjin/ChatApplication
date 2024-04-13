@@ -41,7 +41,7 @@ func (u *UserUseCase) MustGetUserByUsername(ctx context.Context, username string
 		IsOnline: false,
 	}
 
-	if err := u.UserRepo.AddOne(ctx, newUser); err != nil {
+	if err := u.UserRepo.InitNewUser(ctx, newUser); err != nil {
 		return nil, err
 	}
 

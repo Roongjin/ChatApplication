@@ -61,3 +61,21 @@ func (u *UserDB) ChangeOnlineStatusById(ctx context.Context, userId uuid.UUID, i
 
 	return nil
 }
+
+func (u *UserDB) InitNewUser(ctx context.Context, user *model.User) error {
+	if _, err := u.db.NewInsert().Model(user).Exec(ctx); err != nil {
+		return err
+	}
+
+	link := model.UserRoomLink{
+		Id:     uuid.New(),
+		UserId: user.Id,
+		RoomId: model.GetBroadcastRoomId(),
+	}
+
+	if _, err := u.db.NewInsert().Model(&link).Exec(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}

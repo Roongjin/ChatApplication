@@ -48,9 +48,9 @@ const Chat = ({ userId }) => {
     if (!lastJsonMessage) {
       return;
     }
-    console.log(lastJsonMessage);
-    console.log(messages);
-    console.log(onlineUsers);
+    console.log("latest message: ", lastJsonMessage);
+    console.log("all messages: ", messages);
+    console.log("all online users instance: ", onlineUsers);
 
     if (lastJsonMessage.type === "message") {
       setMessages(messages.concat(lastJsonMessage));
