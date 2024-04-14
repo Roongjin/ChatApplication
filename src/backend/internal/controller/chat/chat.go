@@ -151,24 +151,21 @@ func (c *Chat) Leave(user *model.User) {
 	}
 
 	// delete user for each room
-	onDelete := func(roomId uuid.UUID) {
-		log.Println("delete user from room")
-		log.Printf("room: %s\n", roomId.String())
+	log.Println("delete user from room")
+	log.Printf("room: %s\n", model.BroadcastRoomId.String())
 
-		sender, receiver := user.Id, roomId
-		c.broadcast <- Message{
-			Id:         uuid.New(),
-			Type:       MessageTypePresence,
-			Sender:     sender,
-			SenderName: user.Username,
-			Receiver:   receiver,
-			Text:       MessageTypeOffline,
-			Timestamp:  time.Now(),
-		}
+	c.broadcast <- Message{
+		Id:         uuid.New(),
+		Type:       MessageTypePresence,
+		Sender:     user.Id,
+		SenderName: user.Username,
+		Receiver:   model.BroadcastRoomId,
+		Text:       MessageTypeOffline,
+		Timestamp:  time.Now(),
 	}
 
 	// delete user -> rooms relationship
-	if err := c.rooms.Delete(user.Id, onDelete); err != nil {
+	if err := c.rooms.Delete(user.Id); err != nil {
 		log.Panicf("error removing from room: %s\n", err.Error())
 	}
 

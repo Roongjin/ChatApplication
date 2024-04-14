@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Roongjin/ChatApplication/src/backend/internal/model"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
@@ -37,7 +36,7 @@ func roomKey(roomId uuid.UUID) string {
 	return fmt.Sprintf("user: %s", roomId.String())
 }
 
-func (t *TableCache) Delete(userId uuid.UUID, fn func(uuid.UUID)) error {
+func (t *TableCache) Delete(userId uuid.UUID) error {
 	roomIds := t.client.SMembers(ctx, userKey(userId)).Val()
 
 	pipe := t.client.Pipeline()
@@ -46,8 +45,6 @@ func (t *TableCache) Delete(userId uuid.UUID, fn func(uuid.UUID)) error {
 		rid := uuid.MustParse(roomId)
 		pipe.SRem(ctx, roomKey(rid), userId)
 	}
-
-	fn(model.BroadcastRoomId)
 
 	_, err := pipe.Exec(ctx)
 	return err
