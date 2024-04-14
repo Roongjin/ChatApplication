@@ -1,7 +1,6 @@
 package model
 
 import (
-	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -38,15 +37,9 @@ type Conversation struct {
 	DeletedAt     *time.Time `bun:"deleted_at,soft_delete,nullzero,type:timestamptz" json:"deleted_at"`
 }
 
-var (
-	BroadcastRoomId uuid.UUID
-	once            sync.Once
-)
-
-func GetBroadcastRoomId() uuid.UUID {
-	once.Do(func() {
-		BroadcastRoomId = uuid.New()
-	})
-
-	return BroadcastRoomId
+type BroadcastRoom struct {
+	bun.BaseModel `bun:"table:broadcast_room,alias:bcroom"`
+	Id            uuid.UUID `bun:"id,pk,type:uuid,default:gen_random_uuid()" json:"id"`
 }
+
+var BroadcastRoomId uuid.UUID

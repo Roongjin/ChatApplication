@@ -70,7 +70,7 @@ func (u *UserDB) InitNewUser(ctx context.Context, user *model.User) error {
 	link := model.UserRoomLink{
 		Id:     uuid.New(),
 		UserId: user.Id,
-		RoomId: model.GetBroadcastRoomId(),
+		RoomId: model.BroadcastRoomId,
 	}
 
 	if _, err := u.db.NewInsert().Model(&link).Exec(ctx); err != nil {

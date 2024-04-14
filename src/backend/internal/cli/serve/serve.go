@@ -8,7 +8,6 @@ import (
 	"github.com/Roongjin/ChatApplication/src/backend/internal/config"
 	"github.com/Roongjin/ChatApplication/src/backend/internal/controller"
 	"github.com/Roongjin/ChatApplication/src/backend/internal/controller/chat"
-	"github.com/Roongjin/ChatApplication/src/backend/internal/model"
 	"github.com/Roongjin/ChatApplication/src/backend/internal/third-party/databases"
 
 	"github.com/gin-contrib/cors"
@@ -46,10 +45,8 @@ var ServeCmd = &cobra.Command{
 		// Chat system
 		chatEntity := chat.NewChat(db, redisClient, &handler.Chat)
 		defer chatEntity.Close()
-		if err := handler.Chat.RoomUsecase.RoomRepo.AddOne(context.Background(), &model.Room{
-			Id: model.GetBroadcastRoomId(),
-		}); err != nil {
-			log.Fatal("could not initialise broadcast room")
+		if err := handler.Chat.RoomUsecase.RoomRepo.InitBroadcastRoom(context.Background()); err != nil {
+			log.Fatal("could not initialise broadcast room", err)
 		}
 
 		r := gin.Default()

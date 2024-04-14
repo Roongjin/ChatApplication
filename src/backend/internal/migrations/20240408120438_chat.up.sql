@@ -8,6 +8,9 @@ CREATE TABLE users (
 CREATE TABLE rooms (id UUID PRIMARY KEY DEFAULT gen_random_uuid ());
 
 
+CREATE TABLE broadcast_room (id UUID PRIMARY KEY DEFAULT gen_random_uuid ());
+
+
 CREATE TABLE user_room_links (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
   user_id UUID REFERENCES users (id) ON UPDATE CASCADE ON DELETE SET NULL,
