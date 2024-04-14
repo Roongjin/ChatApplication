@@ -83,47 +83,42 @@ func (c *Chat) newSession(ws *websocket.Conn) *Session {
 }
 
 // ties userId and sessionId together
-func (c *Chat) Bind(uid UserId, sid SessionId) func() {
+func (c *Chat) Bind(user *model.User, sid SessionId) func() {
 	log.Println("method: bind")
-	log.Printf("user: %s\n", uid.String())
+	log.Printf("user: %s\n", user.Id.String())
 	log.Printf("session: %s\n", sid.String())
 
 	// if the user has no sessions associated, create a new one
-	if sess := c.Get(uid); len(sess) == 0 {
-		c.Join(uid)
+	if sess := c.Get(UserId(user.Id)); len(sess) == 0 {
+		c.Join(user)
 	}
 
-	c.UserSessionsTable.Add(uuid.UUID(uid), uuid.UUID(sid))
+	c.UserSessionsTable.Add(user.Id, uuid.UUID(sid))
 
 	return func() {
 		session := c.sessions.Get(uuid.UUID(sid))
 		c.Clear(session)
 
-		if len(c.Get(uid)) == 0 {
+		if len(c.Get(UserId(user.Id))) == 0 {
 			// clear room if no longer any session associated to that user
-			c.Leave(uid)
+			c.Leave(user)
 		}
 	}
 }
 
 // add user to an existing room
-func (c *Chat) Join(uid UserId) {
+func (c *Chat) Join(user *model.User) {
 	log.Println("method: join")
-	log.Printf("user: %s\n", uid.String())
-	// TODO: refactor later
-	user, err := c.Resolver.UserUsecase.UserRepo.FindOneById(ctx, uuid.UUID(uid))
-	if err != nil {
-		log.Panicf("error getting user instance: %s\n", err.Error())
-	}
+	log.Printf("user: %s\n", user.Id.String())
 
-	links, err := c.Resolver.LinkUsecase.LinkRepo.FindByUserId(ctx, uuid.UUID(uid))
+	links, err := c.Resolver.LinkUsecase.LinkRepo.FindByUserId(ctx, user.Id)
 	if err != nil {
 		log.Panicf("error getting rooms: %s\n", err.Error())
 	}
 
 	for _, lookup := range links {
 		// notify other user in the room
-		sender, receiver := uuid.UUID(uid), lookup.RoomId
+		sender, receiver := user.Id, lookup.RoomId
 
 		c.broadcast <- Message{
 			Id:         uuid.New(),
@@ -136,7 +131,7 @@ func (c *Chat) Join(uid UserId) {
 		}
 
 		// then add the user after broadcast to avoid notifying themselves
-		if err := c.rooms.Add(uuid.UUID(uid), lookup.RoomId); err != nil {
+		if err := c.rooms.Add(user.Id, lookup.RoomId); err != nil {
 			log.Panicf("join error: %s\n", err.Error())
 		}
 
@@ -144,16 +139,16 @@ func (c *Chat) Join(uid UserId) {
 		log.Printf("room: %s\n", lookup.RoomId.String())
 	}
 
-	if err := c.Resolver.UserUsecase.UserRepo.ChangeOnlineStatusById(ctx, uuid.UUID(uid), ONLINE); err != nil {
+	if err := c.Resolver.UserUsecase.UserRepo.ChangeOnlineStatusById(ctx, user.Id, ONLINE); err != nil {
 		log.Panicf("error changing to ONLINE status: %s\n", err.Error())
 	}
 }
 
 // clear the user's session from the room
-func (c *Chat) Leave(uid UserId) {
+func (c *Chat) Leave(user *model.User) {
 	log.Println("method: leave")
-	log.Printf("user: %s\n", uid.String())
-	user, err := c.Resolver.UserUsecase.UserRepo.FindOneById(ctx, uuid.UUID(uid))
+	log.Printf("user: %s\n", user.Id.String())
+	user, err := c.Resolver.UserUsecase.UserRepo.FindOneById(ctx, user.Id)
 	if err != nil {
 		log.Panicf("error getting user instance: %s\n", err.Error())
 	}
@@ -163,7 +158,7 @@ func (c *Chat) Leave(uid UserId) {
 		log.Println("delete user from room")
 		log.Printf("room: %s\n", roomId.String())
 
-		sender, receiver := uuid.UUID(uid), roomId
+		sender, receiver := user.Id, roomId
 		c.broadcast <- Message{
 			Id:         uuid.New(),
 			Type:       MessageTypePresence,
@@ -176,11 +171,11 @@ func (c *Chat) Leave(uid UserId) {
 	}
 
 	// delete user -> rooms relationship
-	if err := c.rooms.Delete(uuid.UUID(uid), onDelete); err != nil {
+	if err := c.rooms.Delete(user.Id, onDelete); err != nil {
 		log.Panicf("error removing from room: %s\n", err.Error())
 	}
 
-	if err := c.Resolver.UserUsecase.UserRepo.ChangeOnlineStatusById(ctx, uuid.UUID(uid), OFFLINE); err != nil {
+	if err := c.Resolver.UserUsecase.UserRepo.ChangeOnlineStatusById(ctx, user.Id, OFFLINE); err != nil {
 		log.Panicf("error changing to OFFLINE status: %s\n", err.Error())
 	}
 
@@ -364,7 +359,7 @@ func (c *Chat) ServeWS(gc *gin.Context) {
 	}
 
 	session := c.newSession(ws)
-	close := c.Bind(UserId(user.Id), SessionId(session.id))
+	close := c.Bind(user, SessionId(session.id))
 	defer close()
 
 	// notify that a user went online
