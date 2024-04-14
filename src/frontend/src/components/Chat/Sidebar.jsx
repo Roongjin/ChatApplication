@@ -2,7 +2,11 @@ import "@/index.css";
 
 const OnlineUsers = ({ onlineUsers, selfId }) => {
   if (!onlineUsers || onlineUsers.length === 0) {
-    return <p>No users currently online</p>;
+    return (
+      <p className="m-5 p-1 w-max max-w-fit text-sm font-medium text-gray-900 bg-gray-50 border border-gray-300 rounded-lg">
+        No users currently online
+      </p>
+    );
   }
 
   return (
