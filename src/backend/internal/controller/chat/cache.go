@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Roongjin/ChatApplication/src/backend/internal/model"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
@@ -44,8 +45,9 @@ func (t *TableCache) Delete(userId uuid.UUID, fn func(uuid.UUID)) error {
 	for _, roomId := range roomIds {
 		rid := uuid.MustParse(roomId)
 		pipe.SRem(ctx, roomKey(rid), userId)
-		fn(rid)
 	}
+
+	fn(model.BroadcastRoomId)
 
 	_, err := pipe.Exec(ctx)
 	return err

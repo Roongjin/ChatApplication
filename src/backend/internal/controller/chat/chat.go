@@ -116,20 +116,18 @@ func (c *Chat) Join(user *model.User) {
 		log.Panicf("error getting rooms: %s\n", err.Error())
 	}
 
+	// notify other user in the room
+	c.broadcast <- Message{
+		Id:         uuid.New(),
+		Type:       MessageTypePresence,
+		Sender:     user.Id,
+		SenderName: user.Username,
+		Receiver:   model.BroadcastRoomId,
+		Text:       MessageTypeOnline,
+		Timestamp:  time.Now(),
+	}
+
 	for _, lookup := range links {
-		// notify other user in the room
-		sender, receiver := user.Id, lookup.RoomId
-
-		c.broadcast <- Message{
-			Id:         uuid.New(),
-			Type:       MessageTypePresence,
-			Sender:     sender,
-			SenderName: user.Username,
-			Receiver:   receiver,
-			Text:       MessageTypeOnline,
-			Timestamp:  time.Now(),
-		}
-
 		// then add the user after broadcast to avoid notifying themselves
 		if err := c.rooms.Add(user.Id, lookup.RoomId); err != nil {
 			log.Panicf("join error: %s\n", err.Error())
@@ -138,7 +136,6 @@ func (c *Chat) Join(user *model.User) {
 		log.Println("joined room")
 		log.Printf("room: %s\n", lookup.RoomId.String())
 	}
-
 	if err := c.Resolver.UserUsecase.UserRepo.ChangeOnlineStatusById(ctx, user.Id, ONLINE); err != nil {
 		log.Panicf("error changing to ONLINE status: %s\n", err.Error())
 	}
