@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import apiClient from "@/libs/apiClient";
 import "@/index.css";
 import { Message, InputBox } from "@/components/Chat/Conversation";
-import OnlineUsers from "@/components/Chat/Sidebar";
+import AllUsers from "@/components/Chat/Sidebar";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import RoomList from "./Room";
 
 const Chat = ({ userId }) => {
   const [messages, setMessages] = useState([]);
-  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [currentRoomId, setCurrentRoomId] = useState("");
   const [existedRooms, setExistedRooms] = useState([]);
   const chatContainerRef = useRef(null);
@@ -29,12 +29,12 @@ const Chat = ({ userId }) => {
       navigate("/");
     }
 
-    async function fetchOnlineUsers() {
+    async function fetchAllUsers() {
       const { data } = await apiClient
-        .get("/chat/online-users")
+        .get("/chat/all-users")
         .then((resp) => resp.data);
       if (data) {
-        setOnlineUsers(data);
+        setAllUsers(data);
       }
     }
 
@@ -47,7 +47,7 @@ const Chat = ({ userId }) => {
       }
     }
 
-    fetchOnlineUsers();
+    fetchAllUsers();
     fetchExistedRooms();
   }, []);
 
@@ -65,7 +65,7 @@ const Chat = ({ userId }) => {
     }
     console.log("latest message: ", lastJsonMessage);
     console.log("all messages: ", messages);
-    console.log("all online users instance: ", onlineUsers);
+    console.log("all user instances: ", allUsers);
 
     if (lastJsonMessage.type === "message") {
       setMessages(messages.concat(lastJsonMessage));
@@ -73,22 +73,27 @@ const Chat = ({ userId }) => {
     }
 
     if (lastJsonMessage.type === "presence") {
-      if (
-        lastJsonMessage.text === "1" &&
-        !onlineUsers.some((user) => user.id === lastJsonMessage.sender)
-      ) {
-        setOnlineUsers(
-          onlineUsers.concat({
-            id: lastJsonMessage.sender,
-            is_online: true,
-            username: lastJsonMessage.sender_name,
-          }),
+      if (lastJsonMessage.text === "1") {
+        setAllUsers(
+          allUsers.some((user) => user.id === lastJsonMessage.sender)
+            ? allUsers.map((user) =>
+                user.id === lastJsonMessage.sender
+                  ? { ...user, is_online: true }
+                  : user,
+              )
+            : allUsers.concat({
+                id: lastJsonMessage.sender,
+                is_online: true,
+                username: lastJsonMessage.sender_name,
+              }),
         );
         return;
       }
-      setOnlineUsers(
-        onlineUsers.filter(
-          (user) => user.username !== lastJsonMessage.sender_name,
+      setAllUsers(
+        allUsers.map((user) =>
+          user.id === lastJsonMessage.sender
+            ? { ...user, is_online: false }
+            : user,
         ),
       );
     }
@@ -110,15 +115,14 @@ const Chat = ({ userId }) => {
         </div>
         <div className="max-w-full relative flex flex-col">
           <div
-            className="relative overflow-y-scroll max-h-screen"
-            style={{ maxHeight: "90vh" }}
+            className="relative overflow-y-scroll no-scrollbar max-h-[90vh] h-[90vh]"
             ref={chatContainerRef}
           >
             {messages.map((msg) => (
               <Message key={msg.id} message={msg} />
             ))}
           </div>
-          <div className="relative">
+          <div className="relative m-2">
             <InputBox
               userId={userId}
               roomId={currentRoomId}
@@ -127,7 +131,9 @@ const Chat = ({ userId }) => {
           </div>
         </div>
         <div>
-          <OnlineUsers onlineUsers={onlineUsers} selfId={userId} />
+          <div>
+            <AllUsers allUsers={allUsers} selfId={userId} />
+          </div>
         </div>
       </div>
     </>

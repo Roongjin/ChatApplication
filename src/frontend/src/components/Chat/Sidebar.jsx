@@ -1,10 +1,10 @@
 import "@/index.css";
 
-const OnlineUsers = ({ onlineUsers, selfId }) => {
-  if (!onlineUsers || onlineUsers.length === 0) {
+const AllUsers = ({ allUsers, selfId }) => {
+  if (!allUsers || allUsers.length === 0) {
     return (
       <p className="m-5 p-1 w-max max-w-fit text-sm font-medium text-gray-900 bg-gray-50 border border-gray-300 rounded-lg">
-        No users currently online
+        No users currently existed
       </p>
     );
   }
@@ -12,13 +12,17 @@ const OnlineUsers = ({ onlineUsers, selfId }) => {
   return (
     <>
       <p className="m-5 p-1 w-max max-w-fit text-sm font-medium text-gray-900 bg-gray-50 border border-gray-300 rounded-lg">
-        Online Users
+        Users
       </p>
-      {onlineUsers.map((user) =>
+      {allUsers.map((user) =>
         user.id === selfId ? null : (
           <p key={user.id} className="p-5">
             <span className="flex items-center text-sm font-medium text-gray-900 me-3">
-              <span className="flex w-2.5 h-2.5 bg-blue-600 rounded-full me-1.5 flex-shrink-0"></span>
+              {user.is_online ? (
+                <span className="flex w-2.5 h-2.5 bg-green-400 rounded-full me-1.5 flex-shrink-0"></span>
+              ) : (
+                <span className="flex w-2.5 h-2.5 bg-gray-600 rounded-full me-1.5 flex-shrink-0"></span>
+              )}
               {user.username}
             </span>
           </p>
@@ -28,4 +32,4 @@ const OnlineUsers = ({ onlineUsers, selfId }) => {
   );
 };
 
-export default OnlineUsers;
+export default AllUsers;

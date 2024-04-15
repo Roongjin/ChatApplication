@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (r *Resolver) GetOnlineUsers(c *gin.Context) {
-	onlineUsers, err := r.UserUsecase.UserRepo.FindOnlineUsers(c)
+func (r *Resolver) GetAllUsers(c *gin.Context) {
+	onlineUsers, err := r.UserUsecase.UserRepo.FindAllUsers(c)
 	if err != nil {
 		util.Raise500Error(c, err)
 	}

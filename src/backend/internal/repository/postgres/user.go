@@ -48,6 +48,15 @@ func (u *UserDB) FindOnlineUsers(ctx context.Context) ([]*model.User, error) {
 	return users, nil
 }
 
+func (u *UserDB) FindAllUsers(ctx context.Context) ([]*model.User, error) {
+	var users []*model.User
+	if err := u.db.NewSelect().Model(&users).Scan(ctx, &users); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
 func (u *UserDB) ChangeOnlineStatusById(ctx context.Context, userId uuid.UUID, isOnline bool) error {
 	user, err := u.FindOneById(ctx, userId)
 	if err != nil {

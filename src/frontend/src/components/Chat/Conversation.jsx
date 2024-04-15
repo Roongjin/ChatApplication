@@ -4,7 +4,7 @@ import { useState } from "react";
 const Message = ({ message }) => {
   const time = message.ts.match(/\d\d:\d\d/);
   return (
-    <div className="flex w-max max-w-fit items-start p-5 bg-gray-50 border border-gray-300 rounded-lg">
+    <div className="flex w-full max-w-full items-start p-5 bg-gray-50 border border-gray-300 rounded-lg">
       <div className="flex flex-col w-full max-w-[320px] leading-1.5">
         <div className="flex items-center space-x-2 rtl:space-x-reverse">
           <span className="text-sm font-semibold text-gray-900">
@@ -12,7 +12,9 @@ const Message = ({ message }) => {
           </span>
           <span className="text-sm font-normal text-gray-500">{time}</span>
         </div>
-        <p className="text-sm font-normal py-2 text-gray-900">{message.text}</p>
+        <p className="text-sm font-normal py-2 text-gray-900 break-words">
+          {message.text}
+        </p>
         <span className="text-sm font-normal text-gray-500">Delivered</span>
       </div>
     </div>
