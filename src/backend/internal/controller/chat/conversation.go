@@ -18,8 +18,14 @@ func (r *Resolver) GetConversationsByRoomId(c *gin.Context) {
 		return
 	}
 
+	messages, err := util.ParseConversationToMessage(c, r.UserUsecase, conversations)
+	if err != nil {
+		util.Raise500Error(c, err)
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data":    conversations,
+		"data":    messages,
 	})
 }

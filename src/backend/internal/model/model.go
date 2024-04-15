@@ -37,6 +37,13 @@ type Conversation struct {
 	DeletedAt     *time.Time `bun:"deleted_at,soft_delete,nullzero,type:timestamptz" json:"deleted_at"`
 }
 
+type Message struct {
+	Id         uuid.UUID `json:"id"`
+	Text       string    `json:"text"`
+	SenderName string    `json:"sender_name"`
+	Timestamp  time.Time `json:"ts"`
+}
+
 type BroadcastRoom struct {
 	bun.BaseModel `bun:"table:broadcast_room,alias:bcroom"`
 	Id            uuid.UUID `bun:"id,pk,type:uuid,default:gen_random_uuid()" json:"id"`
