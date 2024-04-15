@@ -1,21 +1,38 @@
-import "@/index.css";
+import apiClient from "@/libs/apiClient";
 
-const Message = ({ message }) => {
-  const time = message.ts.match(/\d\d:\d\d/);
+const RoomList = ({ existedRooms, setCurrentRoomId, setMessages }) => {
   return (
-    <div className="flex w-max max-w-fit items-start p-5 bg-gray-50 border border-gray-300 rounded-lg">
-      <div className="flex flex-col w-full max-w-[320px] leading-1.5">
-        <div className="flex items-center space-x-2 rtl:space-x-reverse">
-          <span className="text-sm font-semibold text-gray-900">
-            {message.sender_name}
-          </span>
-          <span className="text-sm font-normal text-gray-500">{time}</span>
-        </div>
-        <p className="text-sm font-normal py-2 text-gray-900">{message.data}</p>
-        <span className="text-sm font-normal text-gray-500">Delivered</span>
-      </div>
+    <>
+      {existedRooms.map((room) => (
+        <Room
+          key={room.id}
+          room={room}
+          handleRoomClick={async () => {
+            setCurrentRoomId(room.id);
+
+            const { data } = await apiClient
+              .get(`/chat/conv/${room.id}`)
+              .then((resp) => resp.data);
+            if (data) {
+              console.log(data);
+              setMessages(data);
+            }
+          }}
+        />
+      ))}
+    </>
+  );
+};
+
+const Room = ({ room, handleRoomClick }) => {
+  return (
+    <div
+      onClick={handleRoomClick}
+      className="flex w-max max-w-fit items-start p-5 bg-gray-50 border border-gray-300 rounded-lg"
+    >
+      {room.id}
     </div>
   );
 };
 
-export default Message;
+export default RoomList;
