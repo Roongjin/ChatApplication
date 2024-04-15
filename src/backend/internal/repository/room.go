@@ -8,5 +8,7 @@ import (
 
 type Room interface {
 	BaseRepo[model.Room]
-	InitBroadcastRoom(ctx context.Context) error
+	CheckBroadcastRoomExistence(ctx context.Context) (bool, error)
+	CreateBroadcastRoom(ctx context.Context) error
+	GetBroadcastRoom(ctx context.Context) (*model.BroadcastRoom, error)
 }

@@ -45,7 +45,7 @@ var ServeCmd = &cobra.Command{
 		// Chat system
 		chatEntity := chat.NewChat(db, redisClient, &handler.Chat)
 		defer chatEntity.Close()
-		if err := handler.Chat.RoomUsecase.RoomRepo.InitBroadcastRoom(context.Background()); err != nil {
+		if err := handler.Chat.RoomUsecase.InitBroadcastRoom(context.Background()); err != nil {
 			log.Fatal("could not initialise broadcast room", err)
 		}
 
@@ -65,6 +65,7 @@ var ServeCmd = &cobra.Command{
 		{
 			chat.GET("/ws/:userId", chatEntity.ServeWS)
 			chat.GET("/online-users", handler.User.GetOnlineUsers)
+			chat.GET("/:roomId", handler.Chat.GetConversationsByRoomId)
 		}
 
 		r.Run()
