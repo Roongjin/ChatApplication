@@ -65,7 +65,8 @@ var ServeCmd = &cobra.Command{
 		{
 			chat.GET("/ws/:userId", chatEntity.ServeWS)
 			chat.GET("/online-users", handler.User.GetOnlineUsers)
-			chat.GET("/:roomId", handler.Chat.GetConversationsByRoomId)
+			chat.GET("/:userId", handler.Chat.GetRoomsByUserId)
+			chat.GET("/conv/:roomId", handler.Chat.GetConversationsByRoomId)
 		}
 
 		r.Run()
