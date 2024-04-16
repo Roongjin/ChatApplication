@@ -24,6 +24,15 @@ const Chat = ({ userId }) => {
     shouldReconnect: () => true,
   });
 
+  async function fetchExistedRooms() {
+    const { data } = await apiClient
+      .get(`/chat/${userId}`)
+      .then((resp) => resp.data);
+    if (data) {
+      setExistedRooms(data);
+    }
+  }
+
   useEffect(() => {
     console.log("wsurl changed");
     setWsUrl(`ws://${import.meta.env.VITE_IPADDR}:8080/chat/ws/${userId}`);
@@ -44,15 +53,6 @@ const Chat = ({ userId }) => {
       }
     }
 
-    async function fetchExistedRooms() {
-      const { data } = await apiClient
-        .get(`/chat/${userId}`)
-        .then((resp) => resp.data);
-      if (data) {
-        setExistedRooms(data);
-      }
-    }
-
     async function fetchBcstRoomId() {
       const { data } = await apiClient
         .get("/chat/broadcast-id")
@@ -65,7 +65,7 @@ const Chat = ({ userId }) => {
     fetchAllUsers();
     fetchExistedRooms();
     fetchBcstRoomId();
-  }, [wsUrl]);
+  }, []);
 
   //Chat
   useEffect(() => {
@@ -84,7 +84,10 @@ const Chat = ({ userId }) => {
     console.log("all user instances: ", allUsers);
 
     if (lastJsonMessage.type === "message") {
-      setMessages(messages.concat(lastJsonMessage));
+      fetchExistedRooms();
+      if (lastJsonMessage.room === currentRoomId) {
+        setMessages(messages.concat(lastJsonMessage));
+      }
       return;
     }
 
