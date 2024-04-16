@@ -67,6 +67,7 @@ var ServeCmd = &cobra.Command{
 			chat.GET("/all-users", handler.User.GetAllUsers)
 			chat.GET("/:userId", handler.Chat.GetRoomsByUserId)
 			chat.GET("/conv/:roomId", handler.Chat.GetConversationsByRoomId)
+			chat.POST("/new-room/:userId", handler.Chat.MustGetNewRoom)
 		}
 
 		r.Run()

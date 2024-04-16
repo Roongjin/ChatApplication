@@ -17,6 +17,7 @@ type User struct {
 type Room struct {
 	bun.BaseModel `bun:"table:rooms,alias:rooms"`
 	Id            uuid.UUID `bun:"id,pk,type:uuid,default:gen_random_uuid()" json:"id"`
+	Members       []*User   `bun:"-" json:"members"`
 }
 
 type UserRoomLink struct {
@@ -42,6 +43,10 @@ type Message struct {
 	Text       string    `json:"text"`
 	SenderName string    `json:"sender_name"`
 	Timestamp  time.Time `json:"ts"`
+}
+
+type NewRoomInput struct {
+	RoomMembersName []string `json:"room_members_name"`
 }
 
 type BroadcastRoom struct {

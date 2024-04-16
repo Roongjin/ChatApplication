@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import apiClient from "@/libs/apiClient";
 import "@/index.css";
 import { Message, InputBox } from "@/components/Chat/Conversation";
-import AllUsers from "@/components/Chat/Sidebar";
+import { AllUsers, NewRoomButton } from "@/components/Chat/Sidebar";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import RoomList from "./Room";
 
@@ -15,13 +15,15 @@ const Chat = ({ userId }) => {
   const chatContainerRef = useRef(null);
   const navigate = useNavigate();
   const WS_URL = `ws://${import.meta.env.VITE_IPADDR}:8080/chat/ws/${userId}`;
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
-    WS_URL,
-    {
+
+  const useRefreshedWebSocket = () => {
+    return useWebSocket(WS_URL, {
       share: false,
       shouldReconnect: () => true,
-    },
-  );
+    });
+  };
+  const { sendJsonMessage, lastJsonMessage, readyState } =
+    useRefreshedWebSocket();
 
   //On boot
   useEffect(() => {
@@ -113,7 +115,7 @@ const Chat = ({ userId }) => {
             setMessages={setMessages}
           />
         </div>
-        <div className="max-w-full relative flex flex-col">
+        <div className="max-w-full relative flex flex-col border border-gray-300 rounded-lg">
           <div
             className="relative overflow-y-scroll no-scrollbar max-h-[90vh] h-[90vh]"
             ref={chatContainerRef}
@@ -133,6 +135,14 @@ const Chat = ({ userId }) => {
         <div>
           <div>
             <AllUsers allUsers={allUsers} selfId={userId} />
+          </div>
+          <div>
+            <NewRoomButton
+              selfId={userId}
+              existedRooms={existedRooms}
+              setExistedRooms={setExistedRooms}
+              setCurrentRoomId={setCurrentRoomId}
+            />
           </div>
         </div>
       </div>

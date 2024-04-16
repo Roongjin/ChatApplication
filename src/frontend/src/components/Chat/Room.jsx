@@ -25,12 +25,20 @@ const RoomList = ({ existedRooms, setCurrentRoomId, setMessages }) => {
 };
 
 const Room = ({ room, handleRoomClick }) => {
+  console.log(room);
   return (
     <div
       onClick={handleRoomClick}
-      className="flex w-max max-w-fit items-start p-5 bg-gray-50 border border-gray-300 rounded-lg"
+      className="flex w-full max-w-full items-center p-5 bg-gray-50 border border-gray-300 rounded-lg m-2"
     >
-      {room.id}
+      {room.members.map((user) => (
+        <span
+          key={user.id}
+          className="bg-green-100 border border-gray-300 rounded-lg p-1 m-1"
+        >
+          {user.username}
+        </span>
+      ))}
     </div>
   );
 };
