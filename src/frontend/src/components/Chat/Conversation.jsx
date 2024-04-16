@@ -35,7 +35,7 @@ const InputBox = ({ userId, roomId, sendJsonMessage }) => {
   };
 
   return (
-    <form onSubmit={sendMessage}>
+    <form onSubmit={sendMessage} className="border-gray-100 border rounded-lg">
       <div className="flex items-center px-3 py-2 rounded-lg bg-gray-50">
         <input
           id="chat"

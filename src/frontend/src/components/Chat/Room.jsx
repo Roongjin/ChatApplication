@@ -14,7 +14,6 @@ const RoomList = ({ existedRooms, setCurrentRoomId, setMessages }) => {
               .get(`/chat/conv/${room.id}`)
               .then((resp) => resp.data);
             if (data) {
-              console.log(data);
               setMessages(data);
             }
           }}
@@ -25,7 +24,6 @@ const RoomList = ({ existedRooms, setCurrentRoomId, setMessages }) => {
 };
 
 const Room = ({ room, handleRoomClick }) => {
-  console.log(room);
   return (
     <div
       onClick={handleRoomClick}

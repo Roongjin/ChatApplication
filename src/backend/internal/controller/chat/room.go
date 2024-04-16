@@ -30,6 +30,13 @@ func (r *Resolver) GetRoomsByUserId(c *gin.Context) {
 	})
 }
 
+func (r *Resolver) GetBroadcastRoomId(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    model.BroadcastRoomId,
+	})
+}
+
 func (r *Resolver) MustGetNewRoom(c *gin.Context) {
 	userIdParam := c.Param("userId")
 	userId := uuid.MustParse(userIdParam)

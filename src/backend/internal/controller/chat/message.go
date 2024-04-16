@@ -10,6 +10,7 @@ const (
 	MessageTypePresence = "presence"
 	MessageTypeMessage  = "message"
 	MessageTypeStatus   = "status"
+	MessageTypeReset    = "reset"
 
 	MessageTypeOffline = "0"
 	MessageTypeOnline  = "1"

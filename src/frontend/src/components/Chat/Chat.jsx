@@ -12,18 +12,22 @@ const Chat = ({ userId }) => {
   const [allUsers, setAllUsers] = useState([]);
   const [currentRoomId, setCurrentRoomId] = useState("");
   const [existedRooms, setExistedRooms] = useState([]);
+  const [wsUrl, setWsUrl] = useState(
+    `ws://${import.meta.env.VITE_IPADDR}:8080/chat/ws/${userId}`,
+  );
+  const [bcstRoomId, setBcstRoomId] = useState("");
   const chatContainerRef = useRef(null);
   const navigate = useNavigate();
-  const WS_URL = `ws://${import.meta.env.VITE_IPADDR}:8080/chat/ws/${userId}`;
 
-  const useRefreshedWebSocket = () => {
-    return useWebSocket(WS_URL, {
-      share: false,
-      shouldReconnect: () => true,
-    });
-  };
-  const { sendJsonMessage, lastJsonMessage, readyState } =
-    useRefreshedWebSocket();
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(wsUrl, {
+    share: false,
+    shouldReconnect: () => true,
+  });
+
+  useEffect(() => {
+    console.log("wsurl changed");
+    setWsUrl(`ws://${import.meta.env.VITE_IPADDR}:8080/chat/ws/${userId}`);
+  }, [wsUrl]);
 
   //On boot
   useEffect(() => {
@@ -49,9 +53,19 @@ const Chat = ({ userId }) => {
       }
     }
 
+    async function fetchBcstRoomId() {
+      const { data } = await apiClient
+        .get("/chat/broadcast-id")
+        .then((resp) => resp.data);
+      if (data) {
+        setBcstRoomId(data);
+      }
+    }
+
     fetchAllUsers();
     fetchExistedRooms();
-  }, []);
+    fetchBcstRoomId();
+  }, [wsUrl]);
 
   //Chat
   useEffect(() => {
@@ -99,6 +113,10 @@ const Chat = ({ userId }) => {
         ),
       );
     }
+
+    if (lastJsonMessage.type === "reset") {
+      setWsUrl("");
+    }
   }, [lastJsonMessage]);
 
   useEffect(() => {
@@ -142,6 +160,10 @@ const Chat = ({ userId }) => {
               existedRooms={existedRooms}
               setExistedRooms={setExistedRooms}
               setCurrentRoomId={setCurrentRoomId}
+              setMessages={setMessages}
+              setWsUrl={setWsUrl}
+              sendJsonMessage={sendJsonMessage}
+              bcstRoomId={bcstRoomId}
             />
           </div>
         </div>
