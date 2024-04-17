@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import apiClient from "@/libs/apiClient";
 import "@/index.css";
 import { Message, InputBox } from "@/components/Chat/Conversation";
+import RoomList from "@/components/Chat/Room";
 import { AllUsers, NewRoomButton } from "@/components/Chat/Sidebar";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import RoomList from "./Room";
 
 const Chat = ({ userId }) => {
   const [messages, setMessages] = useState([]);
@@ -126,6 +126,7 @@ const Chat = ({ userId }) => {
     chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
   }, [messages]);
 
+  //TODO: set scrollable for room list
   return (
     <>
       <div className="grid grid-cols-3 gap-4">

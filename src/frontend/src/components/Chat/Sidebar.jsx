@@ -88,7 +88,16 @@ const NewRoomButton = ({
       <Modal dismissible show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>Enter room members</Modal.Header>
         <Modal.Body>
-          <div>{roomMembers}</div>
+          <div>
+            {roomMembers.map((member) => (
+              <span
+                key={member}
+                className="border border-gray-300 rounded-lg bg-blue-200 m-2"
+              >
+                {member}
+              </span>
+            ))}
+          </div>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -97,7 +106,7 @@ const NewRoomButton = ({
             }}
           >
             <input
-              className="block mx-4 p-2.5 w-1/3 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+              className="block mx-4 m-3 p-2.5 w-1/3 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Username"
