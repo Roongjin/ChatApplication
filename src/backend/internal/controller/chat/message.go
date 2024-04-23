@@ -9,6 +9,7 @@ import (
 const (
 	MessageTypePresence = "presence"
 	MessageTypeMessage  = "message"
+	MessageTypeTyping   = "typing"
 	MessageTypeStatus   = "status"
 	MessageTypeReset    = "reset"
 

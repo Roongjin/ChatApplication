@@ -23,6 +23,18 @@ const Message = ({ message }) => {
 
 const InputBox = ({ userId, roomId, sendJsonMessage }) => {
   const [input, setInput] = useState("");
+
+  const handleTyping = (event) => {
+    event.preventDefault();
+    setInput(event.target.value);
+    sendJsonMessage({
+      text: "1",
+      type: "typing",
+      sender: userId,
+      room: roomId,
+    });
+  };
+
   const sendMessage = (event) => {
     event.preventDefault();
     sendJsonMessage({
@@ -42,7 +54,7 @@ const InputBox = ({ userId, roomId, sendJsonMessage }) => {
           rows="1"
           className="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={handleTyping}
           placeholder="Your message..."
         ></input>
         <button

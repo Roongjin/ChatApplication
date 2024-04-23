@@ -8,6 +8,7 @@ import { AllUsers, NewRoomButton } from "@/components/Chat/Sidebar";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 
 const Chat = ({ userId }) => {
+  const [currentTypingUsers, setCurrentTypingUsers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [currentRoomId, setCurrentRoomId] = useState("");
@@ -17,6 +18,7 @@ const Chat = ({ userId }) => {
   );
   const [bcstRoomId, setBcstRoomId] = useState("");
   const chatContainerRef = useRef(null);
+  const timeoutRef = useRef({});
   const navigate = useNavigate();
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(wsUrl, {
@@ -91,6 +93,45 @@ const Chat = ({ userId }) => {
       return;
     }
 
+    if (
+      lastJsonMessage.type === "typing" &&
+      lastJsonMessage.room === currentRoomId &&
+      lastJsonMessage.sender !== userId
+    ) {
+      if (
+        currentTypingUsers.some((user) => user.id === lastJsonMessage.sender)
+      ) {
+        clearTimeout(timeoutRef.current[lastJsonMessage.sender]);
+        timeoutRef.current[lastJsonMessage.sender] = setTimeout(
+          () =>
+            setCurrentTypingUsers(
+              currentTypingUsers.filter(
+                (user) => user.id !== lastJsonMessage.sender,
+              ),
+            ),
+          1000,
+        );
+      } else {
+        setCurrentTypingUsers(
+          currentTypingUsers.concat({
+            id: lastJsonMessage.sender,
+            username: lastJsonMessage.sender_name,
+          }),
+        );
+        timeoutRef.current[lastJsonMessage.sender] = setTimeout(
+          () =>
+            setCurrentTypingUsers(
+              currentTypingUsers.filter(
+                (user) => user.id !== lastJsonMessage.sender,
+              ),
+            ),
+          1000,
+        );
+      }
+
+      console.log("Typing: ", currentTypingUsers);
+    }
+
     if (lastJsonMessage.type === "presence") {
       if (lastJsonMessage.text === "1") {
         setAllUsers(
@@ -123,6 +164,10 @@ const Chat = ({ userId }) => {
   }, [lastJsonMessage]);
 
   useEffect(() => {
+    setCurrentTypingUsers([]);
+  }, [currentRoomId]);
+
+  useEffect(() => {
     chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
   }, [messages]);
 
@@ -147,6 +192,9 @@ const Chat = ({ userId }) => {
             ))}
           </div>
           <div className="relative m-2">
+            {currentTypingUsers.map((user) => (
+              <p key={user.id}>{user.username} is typing...</p>
+            ))}
             <InputBox
               userId={userId}
               roomId={currentRoomId}
