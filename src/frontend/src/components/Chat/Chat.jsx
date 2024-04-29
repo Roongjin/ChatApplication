@@ -85,9 +85,6 @@ const Chat = ({ userId }) => {
     if (!lastJsonMessage) {
       return;
     }
-    console.log("latest message: ", lastJsonMessage);
-    console.log("all messages: ", messages);
-    console.log("all user instances: ", allUsers);
 
     if (lastJsonMessage.type === "message") {
       fetchExistedRooms();
@@ -100,7 +97,8 @@ const Chat = ({ userId }) => {
     if (
       lastJsonMessage.type === "typing" &&
       lastJsonMessage.room === currentRoomId &&
-      lastJsonMessage.sender !== userId
+      lastJsonMessage.sender !== userId &&
+      !currentTypingUsers.some((user) => user.id === lastJsonMessage.sender)
     ) {
       if (
         currentTypingUsers.some((user) => user.id === lastJsonMessage.sender)
@@ -108,29 +106,30 @@ const Chat = ({ userId }) => {
         clearTimeout(timeoutRef.current[lastJsonMessage.sender]);
         timeoutRef.current[lastJsonMessage.sender] = setTimeout(
           () =>
-            setCurrentTypingUsers(
-              currentTypingUsers.filter(
+            setCurrentTypingUsers((prevCurrentTypingUsers) =>
+              prevCurrentTypingUsers.filter(
                 (user) => user.id !== lastJsonMessage.sender,
               ),
             ),
           1000,
         );
       } else {
+        const typingMessage = lastJsonMessage;
         setCurrentTypingUsers(
           currentTypingUsers.concat({
-            id: lastJsonMessage.sender,
-            username: lastJsonMessage.sender_name,
+            //useState is not updated yet
+            id: typingMessage.sender,
+            username: typingMessage.sender_name,
           }),
         );
-        timeoutRef.current[lastJsonMessage.sender] = setTimeout(
-          () =>
-            setCurrentTypingUsers(
-              currentTypingUsers.filter(
-                (user) => user.id !== lastJsonMessage.sender,
-              ),
+        timeoutRef.current[typingMessage.sender] = setTimeout(() => {
+          setCurrentTypingUsers((prevCurrentTypingUsers) =>
+            prevCurrentTypingUsers.filter(
+              (user) => user.id !== typingMessage.sender,
             ),
-          1000,
-        );
+          );
+          console.log("cleared: ", typingMessage);
+        }, 1000);
       }
 
       console.log("Typing: ", currentTypingUsers);
